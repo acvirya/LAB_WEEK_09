@@ -17,6 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,15 +46,18 @@ class MainActivity : ComponentActivity() {
                             //and set it as the color of the surface
                             color = MaterialTheme.colorScheme.background
                 ) {
-                    val list = listOf("Tanu", "Tina", "Tono")
-                    //Here, we call the Home composable
-                    Home(list)
+                    Home()
                 }
+
 
             }
         }
     }
 }
+
+data class Student(
+    var name: String
+)
 
 //Notice that we remove the @Preview annotation
 //this is because we're passing a parameter into the composable
@@ -59,16 +66,43 @@ class MainActivity : ComponentActivity() {
 //So, we create another composable function called PreviewHome
 //and we pass the list as a parameter
 @Composable
-fun Home(
-    //Here, we define a parameter called items
-    items: List<String>,
-) {
+fun Home() {
     //Here, we use LazyColumn to lazily display a list of items horizontally
     //LazyColumn is more efficient than Column
     //because it only composes and lays out the currently visible items
     //much like a RecyclerView
     //You can also use LazyRow to lazily display a list of items
 //    horizontally
+
+    val listData = remember { mutableStateListOf(
+        Student("Tanu"),
+        Student("Tina"),
+        Student("Tono")
+    )}
+
+    var inputField = remember { mutableStateOf(Student("")) }
+
+    HomeContent(
+        listData,
+        inputField.value,
+        { input -> inputField.value = inputField.value.copy(input) },
+        {
+            if (inputField.value.name.isNotBlank()) {
+                listData.add(inputField.value)
+                inputField.value = Student("")
+            }
+        }
+    )
+}
+
+@Composable
+fun HomeContent(
+    listData: SnapshotStateList<Student>,
+    inputField: Student,
+    onInputValueChange: (String) -> Unit,
+    onButtonClick: () -> Unit
+) {
+    //Here, we use LazyColumn to display a list of items lazily
     LazyColumn {
         //Here, we use item to display an item inside the LazyColumn
         item {
@@ -94,20 +128,33 @@ fun Home(
             //Here, we use TextField to display a text input field
             TextField(
                 //Set the value of the input field
-                value = "",
+                value = inputField.name,
                 //Set the keyboard type of the input field
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Text
                 ),
                 //Set what happens when the value of the input field
 //                changes
                         onValueChange = {
+                    //Here, we call the onInputValueChange lambda
+//                    function
+                    //and pass the value of the input field as a
+//                    parameter
+                    //This is so that we can update the value of the
+                    inputField
+                    onInputValueChange(it)
                 }
             )
             //Here, we use Button to display a button
             //the onClick parameter is used to set what happens when the
 //            button is clicked
-            Button(onClick = { }) {
+            Button(onClick = {
+                //Here, we call the onButtonClick lambda function
+                //This is so that we can add the inputField value to the
+                listData
+                //and reset the value of the inputField
+                onButtonClick()
+            }) {
                 //Set the text of the button
                 Text(text = stringResource(
                     id = R.string.button_click)
@@ -118,12 +165,13 @@ fun Home(
         //Here, we use items to display a list of items inside the
 //        LazyColumn
         //This is the RecyclerView replacement
-        items(items) { item ->
+        //We pass the listData as a parameter
+        items(listData) { item ->
             Column(
                 modifier = Modifier.padding(vertical = 4.dp).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = item)
+                Text(text = item.name)
             }
         }
     }
@@ -134,6 +182,6 @@ fun Home(
 @Preview(showBackground = true)
 @Composable
 fun PreviewHome() {
-    Home(listOf("Tanu", "Tina", "Tono"))
+    Home()
 }
 

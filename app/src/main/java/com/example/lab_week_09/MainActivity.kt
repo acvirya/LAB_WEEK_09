@@ -1,5 +1,6 @@
 package com.example.lab_week_09
 
+import android.R.attr.bottom
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lab_week_09.ui.theme.LAB_WEEK_09Theme
+import com.example.lab_week_09.ui.theme.OnBackgroundItemText
+import com.example.lab_week_09.ui.theme.OnBackgroundTitleText
+import com.example.lab_week_09.ui.theme.PrimaryTextButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,29 +106,31 @@ fun HomeContent(
     onInputValueChange: (String) -> Unit,
     onButtonClick: () -> Unit
 ) {
-    //Here, we use LazyColumn to display a list of items lazily
     LazyColumn {
         //Here, we use item to display an item inside the LazyColumn
         item {
             Column(
-                //Modifier.padding(16.dp) is used to add padding to the
-//                Column
-                        //You can also use Modifier.padding(horizontal = 16.dp,
-//                        vertical = 8.dp)
+                //Modifier.padding(16.dp) is used to add padding to the Column
+                //You can also use Modifier.padding(horizontal = 16.dp, vertical
+//                = 8.dp)
             //to add padding horizontally and vertically
-            //or Modifier.padding(start = 16.dp, top = 8.dp, end =
-//            16.dp, bottom = 8.dp)
+            //or Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp,
+//            bottom = 8.dp)
             //to add padding to each side
-            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             //Alignment.CenterHorizontally is used to align the Column
 //            horizontally
-            //You can also use verticalArrangement = Arrangement.Center
-//            to align the Column vertically
-            horizontalAlignment = Alignment.CenterHorizontally
+            //You can also use verticalArrangement = Arrangement.Center to
+//            align the Column vertically
+                    horizontalAlignment = Alignment.CenterHorizontally
             ) {
-            Text(text = stringResource(
+            //Here, we call the OnBackgroundTitleText UI Element
+            OnBackgroundTitleText(text = stringResource(
                 id = R.string.enter_item)
             )
+
             //Here, we use TextField to display a text input field
             TextField(
                 //Set the value of the input field
@@ -133,48 +139,39 @@ fun HomeContent(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
-                //Set what happens when the value of the input field
-//                changes
-                        onValueChange = {
-                    //Here, we call the onInputValueChange lambda
-//                    function
-                    //and pass the value of the input field as a
-//                    parameter
+                //Set what happens when the value of the input field changes
+                onValueChange = {
+                    //Here, we call the onInputValueChange lambda function
+                    //and pass the value of the input field as a parameter
                     //This is so that we can update the value of the
-                    inputField
+//                    inputField
                     onInputValueChange(it)
                 }
             )
-            //Here, we use Button to display a button
-            //the onClick parameter is used to set what happens when the
-//            button is clicked
-            Button(onClick = {
-                //Here, we call the onButtonClick lambda function
-                //This is so that we can add the inputField value to the
-                listData
-                //and reset the value of the inputField
+            //Here, we call the PrimaryTextButton UI Element
+            PrimaryTextButton(text = stringResource(
+                id = R.string.button_click)
+            ) {
                 onButtonClick()
-            }) {
-                //Set the text of the button
-                Text(text = stringResource(
-                    id = R.string.button_click)
-                )
             }
         }
         }
-        //Here, we use items to display a list of items inside the
-//        LazyColumn
+        //Here, we use items to display a list of items inside the LazyColumn
         //This is the RecyclerView replacement
         //We pass the listData as a parameter
         items(listData) { item ->
             Column(
-                modifier = Modifier.padding(vertical = 4.dp).fillMaxSize(),
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = item.name)
+                //Here, we call the OnBackgroundItemText UI Element
+                OnBackgroundItemText(text = item.name)
             }
         }
     }
+
 }
 
 
